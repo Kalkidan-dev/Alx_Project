@@ -16,12 +16,19 @@ class Ingredient(models.Model):
     def __str__(self):
         return f"{self.name} ({self.quantity})"
 
-# Ensure validations for required fields such as Title, Ingredients, and Instructions.
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE)
+    ingredient = models.ForeignKey("Ingredient", on_delete=models.CASCADE)
+    quantity = models.CharField(max_length=100)  # e.g., "2 cups", "500g"
+
+    def __str__(self):
+        return f"{self.quantity} of {self.ingredient.name} for {self.recipe.title}"
+
 class Recipe(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
     title = models.CharField(max_length=200)
     description = models.TextField()
-    ingredients = models.ManyToManyField(Ingredient)
+    ingredients = models.ManyToManyField("Ingredient", through="RecipeIngredient")
     instructions = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     preparation_time = models.PositiveIntegerField(help_text="Time in minutes")
