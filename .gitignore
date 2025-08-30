@@ -1,3 +1,7 @@
 /pycache/
 *.pyc
 __pycache__/
+
+recipe_env/
+
+migrations/
