@@ -12,7 +12,7 @@ A backend API built with **Django** and **DRF** for managing recipes. Users can 
 
 ## Installation
 ```bash
-git clone https://github.com/yourusername/Alx_DjangoLearnLab.git
+git clone https://github.com/Kalkidan-dev/Alx_DjangoLearnLab.git
 cd advanced_features_and_security/LibraryProject
 python -m venv recipe_env
 recipe_env\Scripts\activate  # Windows
