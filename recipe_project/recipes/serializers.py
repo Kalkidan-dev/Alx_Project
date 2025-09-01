@@ -1,77 +1,77 @@
+from .models import Category, Ingredient, Recipe, RecipeIngredient
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Category, Ingredient, Recipe, RecipeIngredient
-
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
-
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ['id', 'name']
-
+        fields = '__all__'
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    ingredient = IngredientSerializer()
+    name = serializers.CharField(source='ingredient.name')
+    quantity = serializers.CharField()
 
     class Meta:
         model = RecipeIngredient
-        fields = ['id', 'ingredient', 'quantity']
+        fields = ['name', 'quantity']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(),
-        source='category',
-        write_only=True,
-        allow_null=True,
-        required=False
+        queryset=Category.objects.all(), source='category'
     )
-    recipe_ingredients = RecipeIngredientSerializer(
-        many=True,
-        source='recipeingredient_set',
-        read_only=True
-    )
-    # for creation
-    ingredients_data = serializers.ListField(
-        child=serializers.DictField(),
-        write_only=True,
-        help_text="List of {'name': 'flour', 'quantity': '2 cups'} dicts"
-    )
+    ingredients = RecipeIngredientSerializer(
+        many=True, write_only=True
+    )  # input with name + quantity
+    ingredients_details = RecipeIngredientSerializer(
+        many=True, read_only=True, source='recipeingredient_set'
+    )  # output
 
     class Meta:
         model = Recipe
-        fields = '__all__'
-
-    def _attach_ingredients(self, recipe, ingredients_data):
-        for ing in ingredients_data:
-            name = ing.get('name', '').strip().lower()
-            qty = ing.get('quantity', '').strip()
-            if not name:
-                continue
-            ingredient, _ = Ingredient.objects.get_or_create(name=name)
-            RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient, quantity=qty)
+        fields = [
+            'id', 'title', 'description', 'instructions',
+            'category_id', 'owner', 'ingredients', 'ingredients_details',
+            'preparation_time', 'cooking_time', 'servings', 'created_at', 'updated_at'
+        ]
 
     def create(self, validated_data):
-        ingredients_data = validated_data.pop('ingredients_data', [])
-        recipe = super().create(validated_data)
-        self._attach_ingredients(recipe, ingredients_data)
+        ingredients_data = validated_data.pop('ingredients', [])
+        recipe = Recipe.objects.create(**validated_data, owner=self.context['request'].user)
+
+        for ing in ingredients_data:
+            ingredient_name = ing['ingredient']['name'].strip().lower()
+            ingredient_obj, _ = Ingredient.objects.get_or_create(name=ingredient_name)
+            RecipeIngredient.objects.create(
+                recipe=recipe,
+                ingredient=ingredient_obj,
+                quantity=ing['quantity']
+            )
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients_data = validated_data.pop('ingredients_data', [])
+        ingredients_data = validated_data.pop('ingredients', [])
         instance = super().update(instance, validated_data)
+
+        # Clear old ingredients
         instance.recipeingredient_set.all().delete()
-        self._attach_ingredients(instance, ingredients_data)
+
+        for ing in ingredients_data:
+            ingredient_name = ing['ingredient']['name'].strip().lower()
+            ingredient_obj, _ = Ingredient.objects.get_or_create(name=ingredient_name)
+            RecipeIngredient.objects.create(
+                recipe=instance,
+                ingredient=ingredient_obj,
+                quantity=ing['quantity']
+            )
         return instance
-
-
+    
 class UserSerializer(serializers.ModelSerializer):
     recipes = RecipeSerializer(many=True, read_only=True)
 
