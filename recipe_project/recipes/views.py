@@ -29,8 +29,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
+        # Set the owner to the current authenticated user
         serializer.save(owner=self.request.user)
 
+    def get_queryset(self):
+        """
+        Optionally filter recipes by the current user or other query params.
+        """
+        queryset = super().get_queryset()
+        user = self.request.query_params.get('user')
+        if user:
+            queryset = queryset.filter(owner__id=user)
+        return queryset
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
