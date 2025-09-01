@@ -12,14 +12,14 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'slug')
     search_fields = ('name',)
     ordering = ('name',)
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'quantity')
     search_fields = ('name',)
     ordering = ('name',)
 
