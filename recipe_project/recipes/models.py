@@ -60,7 +60,7 @@ class Recipe(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-created_at"]  # newest recipes first
+        ordering = ["-created_at"]  
         verbose_name = "Recipe"
         verbose_name_plural = "Recipes"
 
