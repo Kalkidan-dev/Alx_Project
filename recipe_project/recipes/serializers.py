@@ -28,10 +28,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     ingredients = RecipeIngredientSerializer(
         many=True, write_only=True
-    )  # input with name + quantity
+    )  
     ingredients_details = RecipeIngredientSerializer(
         many=True, read_only=True, source='recipeingredient_set'
-    )  # output
+    ) 
 
     class Meta:
         model = Recipe
