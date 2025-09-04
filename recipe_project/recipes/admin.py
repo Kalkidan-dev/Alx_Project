@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Recipe, Category, Ingredient, RecipeIngredient
 
+
 # ----------------- Recipe Management -----------------
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
@@ -19,7 +20,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'quantity')
+    list_display = ('name',)
     search_fields = ('name',)
     ordering = ('name',)
 
