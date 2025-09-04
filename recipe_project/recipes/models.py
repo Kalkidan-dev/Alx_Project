@@ -17,10 +17,10 @@ class Category(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
-    quantity = models.CharField(max_length=100)
+    
 
     def __str__(self):
-        return f"{self.name} ({self.quantity})"
+        return f"{self.name}"
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE)
@@ -28,7 +28,7 @@ class RecipeIngredient(models.Model):
     quantity = models.CharField(max_length=100)  
 
     def __str__(self):
-        return f"{self.quantity} of {self.ingredient.name} for {self.recipe.title}"
+        return f"{self.ingredient.name} for {self.recipe.title}"
 
 
 class Recipe(models.Model):
