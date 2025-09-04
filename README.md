@@ -1,16 +1,55 @@
 # Recipe Management API
 
-## Overview
-A backend API built with **Django** and **DRF** for managing recipes. Users can perform CRUD operations on recipes and their accounts, search/filter by category or ingredients, and securely manage their data.
+A Django REST Framework project for managing recipes, categories, and ingredients.  
+Supports JWT authentication for secure access.
+
+---
 
 ## Features
-- **Recipes CRUD:** Title, Description, Ingredients, Instructions, Category, Prep/Cook Time, Servings.  
-- **User Management:** Register, login, and manage own recipes.  
-- **Search & Filter:** By title, category, ingredients, prep/cook time, or servings.  
-- **Pagination & Sorting:** Efficient listing of recipes.  
-- **Security:** CSRF protection, HTTPS-ready, secure cookies, HSTS, and clickjacking prevention.  
+- User registration & JWT login
+- Create, update, delete categories
+- Add recipes with ingredients & quantities
+- List recipes by user
+- Update recipes with PATCH/PUT
 
-## Installation
+---
+
+##  Tech Stack
+- Django & Django REST Framework
+- JWT Authentication (`djangorestframework-simplejwt`)
+- SQLite (default, can be switched to PostgreSQL)
+
+---
+
+##  API Endpoints
+
+### Auth
+- `POST /api/accounts/register/` – Register new user
+- `POST /api/token/` – Get JWT access & refresh token
+- `POST /api/token/refresh/` – Refresh JWT token
+
+### Categories
+- `GET /api/recipes/categories/` – List categories
+- `POST /api/recipes/categories/` – Create category
+
+### Ingredients
+- `GET /api/recipes/ingredients/` – List ingredients
+- `POST /api/recipes/ingredients/` – Create ingredient
+
+### Recipes
+- `GET /api/recipes/recipes/` – List recipes
+- `POST /api/recipes/recipes/` – Create recipe
+- `PATCH /api/recipes/recipes/<id>/` – Update recipe
+- `DELETE /api/recipes/recipes/<id>/` – Delete recipe
+
+---
+
+## ▶️ Demo Video
+👉 [Loom Video Link Here](#)
+
+---
+
+## ⚙️ Installation
 ```bash
 git clone https://github.com/Kalkidan-dev/Alx_DjangoLearnLab.git
 cd advanced_features_and_security/LibraryProject
